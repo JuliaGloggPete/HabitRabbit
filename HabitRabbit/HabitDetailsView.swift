@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct HabitDetailsView: View {
+    @State var content : String = ""
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        TextEditor(text: $content)
     }
 }
 

@@ -6,18 +6,32 @@
 //
 
 import Foundation
+import FirebaseFirestoreSwift
 
-struct Habit {
-    
+struct Habit : Identifiable {
+   // @DocumentID var id : String?
+    var id = UUID()
     var content : String
     var done : Bool = false
     var category : String = ""
+    var timesAweek : Int
     
     private var unformatedDate = Date()
-    private let dateFormatter = DateFormatter()
+   private let dateFormatter = DateFormatter()
     
 
-    var tracker : [String] = []
+    //var tracker : [String] = []
+    init(
+        //id: String? = nil,
+        content: String, done: Bool, category: String, timesAweek: Int) {
+        //self.id = id
+        self.content = content
+        self.done = done
+        self.category = category
+        dateFormatter.dateStyle = .medium
+            self.timesAweek = timesAweek
+      //  self.tracker = tracker
+    }
     
   /*  init(content: String, done: Bool, category: String, tracker: [String]) {
         self.content = content

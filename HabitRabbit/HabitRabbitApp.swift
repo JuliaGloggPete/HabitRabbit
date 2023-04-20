@@ -28,6 +28,7 @@ struct HabitRabbitApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+            //HabitDetailsView()
         }
     }
 }
