@@ -11,9 +11,8 @@ import Firebase
 struct ContentView: View {
     let db = Firestore.firestore()
     
-    var habits = [Habit(content: "Take a vitamin", done: false, category: "health nutrition", timesAweek: 7),
-                  Habit(content: "Work out", done: false, category: "health sport", timesAweek: 3)]
-    
+   @StateObject var habitList = HabitsVM()
+    // detta görs säkert om sen när det är fb
     
     var body: some View {
         NavigationView{
@@ -25,15 +24,15 @@ struct ContentView: View {
                 // minus -1 osv för att visa progressen
                 
                 List() {
-                    ForEach(habits) { habit in
-                        NavigationLink(destination: HabitDetailsView()){
+                    ForEach(habitList.habits) { habit in
+                        NavigationLink(destination: HabitDetailsView(habit: habit, habits: habitList)){
                             HabitsRowView(habit: habit)}
                     }
                 }
                 
             }
             .navigationTitle("Habit")
-            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView()){
+            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView(habits: habitList)){
                 Image(systemName: "plus.circle")
             })
             .onAppear(){
@@ -70,6 +69,8 @@ struct HabitsRowView: View {
             Text(habit.content)
                 .foregroundColor(habit.category == "health sport" ? .blue : habit.category == "health nutrition" ? .green : .black)
                 .listRowBackground(habit.category == "health sport" ? Color.yellow : habit.category == "health nutrition" ? Color.blue : Color.white)
+            Spacer()
+            Text(" times \(habit.timesAweek)")
             Spacer()
             Image(systemName: habit.done ?  "checkmark.seal.fill" : "seal" )
                 .foregroundColor(.cyan)
