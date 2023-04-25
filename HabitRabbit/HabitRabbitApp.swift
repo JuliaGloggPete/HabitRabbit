@@ -23,11 +23,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct HabitRabbitApp: App {
+    
+    
+    @StateObject var habitList = HabitsVM()
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(habitList)
             //HabitDetailsView()
         }
     }

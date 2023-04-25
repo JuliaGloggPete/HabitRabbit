@@ -8,11 +8,42 @@
 import SwiftUI
 import Firebase
 
-struct ContentView: View {
-    let db = Firestore.firestore()
+struct ContentView : View {
     
-   @StateObject var habitList = HabitsVM()
-    // detta görs säkert om sen när det är fb
+    @EnvironmentObject var habitList : HabitsVM
+    @State var signedIn = false
+    
+    var body: some View {
+        
+        if !signedIn {
+            SignInView()
+            
+        }else {
+            HabitDetailsView()
+        }
+        
+    }
+    
+}
+
+
+struct SignInView : View {
+    @EnvironmentObject var habitList : HabitsVM
+    
+    var body: some View {
+        
+        Text("Hej")
+        
+    }
+    
+    
+}
+
+
+struct ContentView: View {
+
+
+    @EnvironmentObject var habitList : HabitsVM
     
     var body: some View {
         NavigationView{
@@ -25,29 +56,30 @@ struct ContentView: View {
                 
                 List() {
                     ForEach(habitList.habits) { habit in
-                        NavigationLink(destination: HabitDetailsView(habit: habit, habits: habitList)){
+                        NavigationLink(destination: HabitDetailsView(habit: habit)) {
                             HabitsRowView(habit: habit)}
                     }
                 }
+             
                 
             }
             .navigationTitle("Habit")
-            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView(habits: habitList)){
+            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView()){
                 Image(systemName: "plus.circle")
             })
             .onAppear(){
-                //db.collection("test").addDocument(data: ["name": "Julia"] )
+                habitList.listen2FS()
+      
+                
             }
-            
-                                }
-                                
-        /*      func saveNewHabit(habitDescription: String){
-         let habit = Habit(content: habitDescription)
-         
-         
-         }
-         */
+          
+        }
+        
+        
+        
     }
+    
+
 }
     
     struct ContentView_Previews: PreviewProvider {
@@ -57,23 +89,25 @@ struct ContentView: View {
     }
 
 
+
 struct HabitsRowView: View {
     let habit : Habit
-    
+    @EnvironmentObject var habitList : HabitsVM
     var body: some View {
-        
-      
-        
         HStack{
-            
-            Text(habit.content)
-                .foregroundColor(habit.category == "health sport" ? .blue : habit.category == "health nutrition" ? .green : .black)
-                .listRowBackground(habit.category == "health sport" ? Color.yellow : habit.category == "health nutrition" ? Color.blue : Color.white)
+            /*@START_MENU_TOKEN@*/Text(habit.content)/*@END_MENU_TOKEN@*/
+                .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
+                .listRowBackground(habit.category == "Health sport" ? Color.yellow : habit.category == "Health nutrition" ? Color.blue : Color.white)
+          
             Spacer()
-            Text(" times \(habit.timesAweek)")
-            Spacer()
-            Image(systemName: habit.done ?  "checkmark.seal.fill" : "seal" )
-                .foregroundColor(.cyan)
+            // Text(" times \(habit.timesAWeek)")
+            //    Spacer()
+            Button(action: {
+                habitList.toggle(habit: habit)
+                
+            }) {
+                Image(systemName: habit.done ?  "checkmark.seal.fill" : "seal" )
+                .foregroundColor(.cyan)}
         }
     }
 }

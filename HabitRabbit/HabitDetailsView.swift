@@ -7,15 +7,22 @@
 
 import SwiftUI
 
+import Firebase
+
 struct HabitDetailsView: View {
+    let db = Firestore.firestore()
     var habit : Habit?
-    @ObservedObject var habits : HabitsVM
-    
+    //@ObservedObject var habits : HabitsVM
+    @EnvironmentObject var habitList : HabitsVM
     @State var content : String = ""
     @State var category : String = "Category"
-    @State var timesAweek : Int = 7
+    @State var timesAWeek : Int = 7
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
+        
+        
+        //current problems - times a week, category blirinte medskickat... ska kolla på det
         
         VStack{
               TextField("Name of habit: ", text: $content)
@@ -28,14 +35,14 @@ struct HabitDetailsView: View {
             
             Menu{
                 ForEach(1..<8) { number in
-                    Button(action: {timesAweek = number}, label: {
+                    Button(action: {timesAWeek = number}, label: {
                         Text("\(number)")
                         
                     })
                 }
                 
             } label: {
-                Label(title: { Text("\(timesAweek) Times a week") }, icon: { Image(systemName: "figure.run") })
+                Label(title: { Text("\(timesAWeek) Times a week") }, icon: { Image(systemName: "figure.run") })
             }
             
             
@@ -79,6 +86,7 @@ struct HabitDetailsView: View {
         .onAppear(perform: setContent)
         .navigationBarItems(trailing: Button("Save"){
             saveNewHabit()
+            presentationMode.wrappedValue.dismiss()
             
         })
     }
@@ -91,20 +99,47 @@ struct HabitDetailsView: View {
         
     }
     
- private func saveNewHabit() {
-       if category == "Category" {
-           category = "Other"
-       }
-    let newHabit = Habit(content: content, done: false, category: category, timesAweek: timesAweek)
-
-     habits.habits.append(newHabit)
+    private func saveNewHabit() {
+        
+        
+        
+        if category == "Category" {
+            category = "Other"
+        }
+        
+        if let habit = habit{
+            
+            habitList.update(habit: habit, with: content, with: category, with: timesAWeek)
+            
+            
+        } else{
+            let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek)
+            do {
+                try db.collection("NewHabit").addDocument(from: newHabit)
+                //    habitList.habits.append(newHabit)
+            } catch {
+                print("Errorroro")
+            }
+            
+        }
+        
     }
-
-  
 
   }
 
-/*struct HabitDetailsView_Previews: PreviewProvider {
+/*func saveNewtoFSHabit(habitDescription: String){
+    let habit = Habit(content: habitDescription, done: false, category: "Health sport", timesAWeek: 4)
+    do {
+        
+        
+        try db.collection("test2").addDocument(from: habit)
+    }catch{
+        print("Error")
+    }
+    
+}
+
+struct HabitDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         HabitDetailsView()
     }

@@ -8,45 +8,48 @@
 import Foundation
 import FirebaseFirestoreSwift
 
-struct Habit : Identifiable {
-   // @DocumentID var id : String?
-    var id = UUID()
+
+struct Habit : Identifiable, Equatable, Codable {
+    
+    @DocumentID var id : String?
+   // var id = UUID()
     var content : String
     var done : Bool = false
     var category : String = ""
-    var timesAweek : Int
-    
+    var timesAWeek : Int
+
+    //den biten hör nog inte till här tror jag
     private var unformatedDate = Date()
-   private let dateFormatter = DateFormatter()
+  
+        private static let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return formatter
+        }()
     
 
     //var tracker : [String] = []
     init(
         //id: String? = nil,
-        content: String, done: Bool, category: String, timesAweek: Int) {
+        content: String, done: Bool, category: String, timesAWeek: Int) {
         //self.id = id
         self.content = content
         self.done = done
         self.category = category
-        dateFormatter.dateStyle = .medium
-            self.timesAweek = timesAweek
+      //  dateFormatter.dateStyle = .medium
+        self.timesAWeek = timesAWeek
       //  self.tracker = tracker
     }
-    
-  /*  init(content: String, done: Bool, category: String, tracker: [String]) {
-        self.content = content
-        self.done = done
-        self.category = category
-        self.tracker = tracker
-        dateFormatter.dateStyle = .medium
-    }*/
+
     
     var date : String {
         
-        dateFormatter.dateStyle = .medium
-        return dateFormatter.string(from: unformatedDate)
+    
+        return Habit.dateFormatter.string(from: unformatedDate)
         
     }
+    
+ 
     
     
     
