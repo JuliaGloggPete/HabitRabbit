@@ -10,16 +10,17 @@ import Firebase
 
 struct ContentView : View {
     
-    @EnvironmentObject var habitList : HabitsVM
+ //  @EnvironmentObject var habitList : HabitsVM
     @State var signedIn = false
+
     
     var body: some View {
         
         if !signedIn {
-            SignInView()
+            SignInView(signedIn: $signedIn)
             
         }else {
-            HabitDetailsView()
+            HabitListView()
         }
         
     }
@@ -28,11 +29,25 @@ struct ContentView : View {
 
 
 struct SignInView : View {
-    @EnvironmentObject var habitList : HabitsVM
+    @Binding var signedIn : Bool
+    var auth = Auth.auth()
     
     var body: some View {
         
-        Text("Hej")
+        Button(action:{
+            auth.signInAnonymously(){ result, error in
+                if let error = error {
+                    print("error signing in")
+                    
+                } else{
+                    signedIn = true
+                    
+                } }}){
+            
+            
+            Text("Sign in")
+        }
+        
         
     }
     
@@ -40,74 +55,126 @@ struct SignInView : View {
 }
 
 
-struct ContentView: View {
+struct HabitListView: View {
 
 
     @EnvironmentObject var habitList : HabitsVM
-    
+
     var body: some View {
-        NavigationView{
-            VStack {
+            NavigationView{
                 
-                
-                
-                //List under list för eventuellt subclass om done som heter dagens dag och false or true o sen dagens datum
-                // minus -1 osv för att visa progressen
-                
-                List() {
-                    ForEach(habitList.habits) { habit in
-                        NavigationLink(destination: HabitDetailsView(habit: habit)) {
-                            HabitsRowView(habit: habit)}
-                    }
+                VStack {
+                    HStack{
+                        
+                        List() {
+                            
+                            ForEach(habitList.habits) { habit in
+                                
+                                NavigationLink(destination: HabitDetailsView(habit: habit)) {
+                                    HabitsTextView(habit: habit)
+                                    StreakView(habit: habit)
+                                 
+                                   
+                                    
+                                
+                                }
+                                
+                            
+                            
+                            
+                            HabitsToggleView(habit: habit)
+                        }
+                    }}
+               
+                        
+
+                    .navigationTitle("Habit")
+                    .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView()){
+                        Image(systemName: "plus.circle")
+                    })
                 }
-             
+            
+                    .onAppear(){
+                        habitList.listen2FS()
+                        
+                        
+                        
+                    }
+                
                 
             }
-            .navigationTitle("Habit")
-            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView()){
-                Image(systemName: "plus.circle")
-            })
-            .onAppear(){
-                habitList.listen2FS()
-      
-                
-            }
-          
+            
+            
+            
         }
         
-        
-        
-    }
-    
 
-}
-    
-    struct ContentView_Previews: PreviewProvider {
+    }
+        
+struct ContentView_Previews: PreviewProvider {
         static var previews: some View {
-            ContentView()
+            HabitListView()
         }
     }
 
+/*struct StreakView : View{
+    let habit: Habit
+    @EnvironmentObject var habitList: HabitsVM
+  
+    var body: some View{
+        
+        
+        Text("Current streak: \(habitList.currentStreak)")
+            .onAppear() {  habitList.showStreak(habit: habit)
+            }
+    }
+    
+}*/
 
-
-struct HabitsRowView: View {
-    let habit : Habit
-    @EnvironmentObject var habitList : HabitsVM
+struct StreakView: View {
+    let habit: Habit
+    @EnvironmentObject var habitList: HabitsVM
+    
     var body: some View {
-        HStack{
-            /*@START_MENU_TOKEN@*/Text(habit.content)/*@END_MENU_TOKEN@*/
-                .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
-                .listRowBackground(habit.category == "Health sport" ? Color.yellow : habit.category == "Health nutrition" ? Color.blue : Color.white)
-          
-            Spacer()
-            // Text(" times \(habit.timesAWeek)")
-            //    Spacer()
-            Button(action: {
-                habitList.toggle(habit: habit)
-                
-            }) {
-                Image(systemName: habit.done ?  "checkmark.seal.fill" : "seal" )
-                .foregroundColor(.cyan)}
+        if let habitID = habit.id,
+           let currentStreak = habitList.currentStreaks[habitID],
+           let longestStreak = habitList.longestStreaks[habitID] {
+            Text("Current streak: \(currentStreak), Longest streak: \(longestStreak)")
+       
+        } else {
+            Text("Streak data not available")
         }
     }
 }
+
+struct HabitsTextView: View {
+    let habit: Habit
+    @EnvironmentObject var habitList: HabitsVM
+    
+    var body: some View {
+     
+                
+                Text(habit.content)
+                    .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
+                    .listRowBackground(habit.category == "Sports/Health" ? Color.yellow : habit.category == "Sports/Health" ? Color.blue : Color.white)
+                    .onAppear() {  habitList.showStreak(habit: habit)}
+        
+    }
+}
+
+struct HabitsToggleView: View {
+    let habit: Habit
+    
+    @EnvironmentObject var habitList: HabitsVM
+    
+    var body: some View {
+        Button(action: {
+            habitList.toggle(habit: habit)
+          
+        }) {
+            Image(systemName: habit.done ? "checkmark.seal.fill" : "seal" )
+                .foregroundColor(.cyan)
+                
+        }
+    }}
+

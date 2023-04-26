@@ -12,17 +12,14 @@ import Firebase
 struct HabitDetailsView: View {
     let db = Firestore.firestore()
     var habit : Habit?
-    //@ObservedObject var habits : HabitsVM
     @EnvironmentObject var habitList : HabitsVM
     @State var content : String = ""
     @State var category : String = "Category"
+    @State var done : Bool = false
     @State var timesAWeek : Int = 7
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        
-        
-        //current problems - times a week, category blirinte medskickat... ska kolla på det
         
         VStack{
               TextField("Name of habit: ", text: $content)
@@ -78,14 +75,25 @@ struct HabitDetailsView: View {
                 
             }label: {
                 Label(title: {Text("\(category)")},
+                      
                       icon:{Image(systemName: "hare")}
                 )
             }
             
         }
         .onAppear(perform: setContent)
+        .navigationBarTitle("Habit Detail", displayMode: .inline)
         .navigationBarItems(trailing: Button("Save"){
-            saveNewHabit()
+            if let habit = habit{
+                habitList.saveHabit(habit:habit)}
+            else
+            {
+                let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek)
+                habitList.saveHabit(habit: newHabit)
+          
+                
+                
+            }
             presentationMode.wrappedValue.dismiss()
             
         })
@@ -95,52 +103,15 @@ struct HabitDetailsView: View {
         
         if let habit = habit {
             content = habit.content
-        }
-        
-    }
-    
-    private func saveNewHabit() {
-        
-        
-        
-        if category == "Category" {
-            category = "Other"
-        }
-        
-        if let habit = habit{
-            
-            habitList.update(habit: habit, with: content, with: category, with: timesAWeek)
-            
-            
-        } else{
-            let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek)
-            do {
-                try db.collection("NewHabit").addDocument(from: newHabit)
-                //    habitList.habits.append(newHabit)
-            } catch {
-                print("Errorroro")
-            }
+            category = habit.category
+            done = habit.done
+            timesAWeek = habit.timesAWeek
             
         }
         
     }
+
 
   }
 
-/*func saveNewtoFSHabit(habitDescription: String){
-    let habit = Habit(content: habitDescription, done: false, category: "Health sport", timesAWeek: 4)
-    do {
-        
-        
-        try db.collection("test2").addDocument(from: habit)
-    }catch{
-        print("Error")
-    }
-    
-}
 
-struct HabitDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        HabitDetailsView()
-    }
-}*/

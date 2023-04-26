@@ -31,8 +31,10 @@ struct HabitRabbitApp: App {
     
     var body: some Scene {
         WindowGroup {
+           // HabitListView().environmentObject(habitList)
             ContentView().environmentObject(habitList)
-            //HabitDetailsView()
+            //SignInView().environmentObject(habitList)
+            //HabitDetailsView().
         }
     }
 }

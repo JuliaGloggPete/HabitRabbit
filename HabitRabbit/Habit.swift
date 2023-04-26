@@ -42,7 +42,7 @@ struct Habit : Identifiable, Equatable, Codable {
     }
 
     
-    var date : String {
+    var initialDate : String {
         
     
         return Habit.dateFormatter.string(from: unformatedDate)
