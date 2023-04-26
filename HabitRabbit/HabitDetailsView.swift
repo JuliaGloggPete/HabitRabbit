@@ -88,10 +88,11 @@ struct HabitDetailsView: View {
                 habitList.saveHabit(habit:habit)}
             else
             {
-                let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek)
-                habitList.saveHabit(habit: newHabit)
-          
                 
+                let date = Date()
+                let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek, dateTracker: [],currentStreak: 0,initialDate: date)
+                habitList.saveHabit(habit: newHabit)
+
                 
             }
             presentationMode.wrappedValue.dismiss()

@@ -17,39 +17,51 @@ struct Habit : Identifiable, Equatable, Codable {
     var done : Bool = false
     var category : String = ""
     var timesAWeek : Int
-
-    //den biten hör nog inte till här tror jag
-    private var unformatedDate = Date()
-  
-        private static let dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            return formatter
-        }()
+    var dateTracker : [Date]
+    var currentStreak: Int 
+    var initialDate : Date
     
-
-    //var tracker : [String] = []
-    init(
-        //id: String? = nil,
-        content: String, done: Bool, category: String, timesAWeek: Int) {
-        //self.id = id
+    init(id: String? = nil, content: String, done: Bool, category: String, timesAWeek: Int, dateTracker: [Date], currentStreak: Int, initialDate: Date) {
+        self.id = id
         self.content = content
         self.done = done
         self.category = category
-      //  dateFormatter.dateStyle = .medium
         self.timesAWeek = timesAWeek
-      //  self.tracker = tracker
+        self.dateTracker = dateTracker
+        self.currentStreak = currentStreak
+        self.initialDate = initialDate
     }
+    
+    //den biten hör nog inte till här tror jag
+//    private var unformatedDate = Date()
+//
+//        private static let dateFormatter: DateFormatter = {
+//            let formatter = DateFormatter()
+//            formatter.dateStyle = .medium
+//            return formatter
+//        }()
+//
+
+//    init(
+//        content: String, done: Bool, category: String, timesAWeek: Int) {
+//        //self.id = id
+//        self.content = content
+//        self.done = done
+//        self.category = category
+//      //  dateFormatter.dateStyle = .medium
+//        self.timesAWeek = timesAWeek
+//      //  self.tracker = tracker
+//    }
 
     
-    var initialDate : String {
-        
-    
-        return Habit.dateFormatter.string(from: unformatedDate)
-        
-    }
-    
- 
+//    var initialDate : String {
+//
+//
+//        return Habit.dateFormatter.string(from: unformatedDate)
+//
+//    }
+//
+//
     
     
     

@@ -10,8 +10,7 @@ import Firebase
 
 struct ContentView : View {
     
- //  @EnvironmentObject var habitList : HabitsVM
-    @State var signedIn = false
+     @State var signedIn = false
 
     
     var body: some View {
@@ -70,10 +69,9 @@ struct HabitListView: View {
                             
                             ForEach(habitList.habits) { habit in
                                 
-                                NavigationLink(destination: HabitDetailsView(habit: habit)) {
+                                HStack{
                                     HabitsTextView(habit: habit)
-                                    StreakView(habit: habit)
-                                 
+                                    HabitsToggleView(habit: habit)
                                    
                                     
                                 
@@ -82,7 +80,6 @@ struct HabitListView: View {
                             
                             
                             
-                            HabitsToggleView(habit: habit)
                         }
                     }}
                
@@ -96,7 +93,8 @@ struct HabitListView: View {
             
                     .onAppear(){
                         habitList.listen2FS()
-                        
+                       
+                     //   habitList.resetToggle()
                         
                         
                     }
@@ -117,35 +115,23 @@ struct ContentView_Previews: PreviewProvider {
         }
     }
 
-/*struct StreakView : View{
-    let habit: Habit
-    @EnvironmentObject var habitList: HabitsVM
-  
-    var body: some View{
-        
-        
-        Text("Current streak: \(habitList.currentStreak)")
-            .onAppear() {  habitList.showStreak(habit: habit)
-            }
-    }
-    
-}*/
 
-struct StreakView: View {
-    let habit: Habit
-    @EnvironmentObject var habitList: HabitsVM
-    
-    var body: some View {
-        if let habitID = habit.id,
-           let currentStreak = habitList.currentStreaks[habitID],
-           let longestStreak = habitList.longestStreaks[habitID] {
-            Text("Current streak: \(currentStreak), Longest streak: \(longestStreak)")
-       
-        } else {
-            Text("Streak data not available")
-        }
-    }
-}
+//struct StreakView: View {
+//    let habit: Habit
+//    @EnvironmentObject var habitList: HabitsVM
+//    
+//    var body: some View {
+//        if let habitID = habit.id,
+//           let currentStreak = habitList.currentStreaks[habitID]
+//          // let longestStreak = habitList.longestStreaks[habitID]
+//        {
+//            Text("Current streak: \(currentStreak)")
+//       
+//        } else {
+//            Text("Streak data not available")
+//        }
+//    }
+//}
 
 struct HabitsTextView: View {
     let habit: Habit
@@ -153,13 +139,14 @@ struct HabitsTextView: View {
     
     var body: some View {
      
-                
+        Text(String(habit.currentStreak))
+        ;
                 Text(habit.content)
                     .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
                     .listRowBackground(habit.category == "Sports/Health" ? Color.yellow : habit.category == "Sports/Health" ? Color.blue : Color.white)
-                    .onAppear() {  habitList.showStreak(habit: habit)}
         
-    }
+        
+                }
 }
 
 struct HabitsToggleView: View {
