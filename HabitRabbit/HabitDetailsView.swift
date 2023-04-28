@@ -31,6 +31,26 @@ struct HabitDetailsView: View {
                     }
             
             Menu{
+                Button(action: {content = "Go for a 30min walk"; category = "Sports/Health"; timesAWeek = 7
+                }, label: {
+                    Text("Go for a 30min walk")
+                    
+                })
+                
+                
+            }label: {
+                Label(title: {Text("Suggestions")},
+                      
+                      icon:{Image(systemName: "hare")}
+                )
+            }
+            
+        
+            
+            
+            
+            
+            Menu{
                 ForEach(1..<8) { number in
                     Button(action: {timesAWeek = number}, label: {
                         Text("\(number)")

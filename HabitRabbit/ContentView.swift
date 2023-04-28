@@ -105,6 +105,7 @@ struct HabitListView: View {
             
             
         }
+    
         
 
     }
@@ -140,6 +141,9 @@ struct HabitsTextView: View {
     var body: some View {
      
         Text(String(habit.currentStreak))
+            .onAppear() {
+                habitList.streakCounter(habit: habit)
+            }
         ;
                 Text(habit.content)
                     .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
