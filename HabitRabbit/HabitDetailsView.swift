@@ -20,86 +20,93 @@ struct HabitDetailsView: View {
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        
-        VStack{
-              TextField("Name of habit: ", text: $content)
-                    .font(.title2)
-                    .onChange(of: content) { newValue in
-                        if content.count > 60 {
-                            content = String(content.prefix(60))
-                        }
+
+            VStack{
+                HStack{
+                
+                    TextField("Name of habit: ", text: $content)
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                        //.frame(alignment: .center)
+                        .onChange(of: content) { newValue in
+                            if content.count > 60 {
+                                content = String(content.prefix(60))
+                            }
+                        }}
+                Spacer()
+                
+               
+                
+                
+                
+                Menu{
+                    ForEach(1..<8) { number in
+                        Button(action: {timesAWeek = number}, label: {
+                            Text("\(number)")
+                            
+                        })
                     }
-            
-            Menu{
-                Button(action: {content = "Go for a 30min walk"; category = "Sports/Health"; timesAWeek = 7
-                }, label: {
-                    Text("Go for a 30min walk")
                     
-                })
-                
-                
-            }label: {
-                Label(title: {Text("Suggestions")},
-                      
-                      icon:{Image(systemName: "hare")}
-                )
-            }
-            
-        
-            
-            
-            
-            
-            Menu{
-                ForEach(1..<8) { number in
-                    Button(action: {timesAWeek = number}, label: {
-                        Text("\(number)")
-                        
-                    })
+                } label: {
+                    Label(title: { Text("\(timesAWeek) Times a week") }, icon: { Image(systemName: "figure.run") })
                 }
                 
-            } label: {
-                Label(title: { Text("\(timesAWeek) Times a week") }, icon: { Image(systemName: "figure.run") })
-            }
-            
-            
-            Menu{
-                Button(action: {category = "Sports/Health"}, label: {
-                    Text("Sports/Health")
-                    
-                })
-                Button(action: {category = "Nutrition/Health"}, label: {
-                    Text("Nutrition/Health")
-                    
-                })
-                Button(action: {category = "Knowledge"}, label: {
-                    Text("Knowledge")
-                    
-                })
-                Button(action: {category = "Well-being"}, label: {
-                    Text("Well-being")
-                    
-                })
-                Button(action: {category = "Enviroment"}, label: {
-                    Text("Enviroment")
-                    
-                })
-                Button(action: {category =  "Social skills"}, label: {
-                    Text("Social skills")
-                    
-                })
-                Button(action: {category = "Other"}, label: {
-                    Text("Other")
-                    
-                })
                 
-            }label: {
-                Label(title: {Text("\(category)")},
-                      
-                      icon:{Image(systemName: "hare")}
-                )
-            }
-            
+                Menu{
+                    Button(action: {category = "Sports/Health"}, label: {
+                        Text("Sports/Health")
+                        
+                    })
+                    Button(action: {category = "Nutrition/Health"}, label: {
+                        Text("Nutrition/Health")
+                        
+                    })
+                    Button(action: {category = "Knowledge"}, label: {
+                        Text("Knowledge")
+                        
+                    })
+                    Button(action: {category = "Well-being"}, label: {
+                        Text("Well-being")
+                        
+                    })
+                    Button(action: {category = "Enviroment"}, label: {
+                        Text("Enviroment")
+                        
+                    })
+                    Button(action: {category =  "Social skills"}, label: {
+                        Text("Social skills")
+                        
+                    })
+                    Button(action: {category = "Other"}, label: {
+                        Text("Other")
+                        
+                    })
+                    
+                }label: {
+                    Label(title: {Text("\(category)")},
+                          
+                          icon:{Image(systemName: "hare")}
+                    )
+                }
+                
+                Spacer()
+                
+                
+                Menu{
+                    Button(action: {content = "Go for a 30min walk"; category = "Sports/Health"; timesAWeek = 7
+                    }, label: {
+                        Text("Go for a 30min walk")
+                        
+                    })
+                    
+                    
+                }label: {
+                    Label(title: {Text("Suggestions")},
+                          
+                          icon:{Image(systemName: "hare")}
+                    )
+                }
+                
         }
         .onAppear(perform: setContent)
         .navigationBarTitle("Habit Detail", displayMode: .inline)

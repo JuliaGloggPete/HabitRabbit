@@ -70,11 +70,7 @@ class HabitsVM : ObservableObject {
         
     }
     
-    
-    func streakUpdate() {
-        
-        
-    }
+
     func streakCounter(habit: Habit) {
         guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
         
@@ -103,8 +99,7 @@ class HabitsVM : ObservableObject {
                             currentDay = previousDay
                         }
                     }
-                    
-                    // Update current streak in Firestore
+      
                     habitRef.updateData(["currentStreak": currentStreak])
                 }
             } else {
@@ -112,9 +107,26 @@ class HabitsVM : ObservableObject {
             }
         }
     }
-
     
-    func fetchDateTracker2(habit: Habit) {
+    func resetToggle(habit: Habit) {
+        guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
+        
+        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
+        habitRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                if let dateTracker = data?["dateTracker"] as? [Timestamp] {
+                    let today = Date()
+                    let calendar = Calendar.current
+                    if !dateTracker.contains(where: { calendar.isDate($0.dateValue(), inSameDayAs: today) }){
+                        habitRef.updateData(["done" : false])}
+                }
+                }
+            }
+            
+        }
+    
+    func fetchDateTracker(habit: Habit) {
         guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
         
         let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
