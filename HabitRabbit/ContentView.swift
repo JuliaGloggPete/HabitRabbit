@@ -61,6 +61,7 @@ struct HabitListView: View {
     
     
     @EnvironmentObject var habitList : HabitsVM
+    @StateObject private var notificationManager = NotificationManager()
     
     var body: some View {
         
@@ -81,7 +82,26 @@ struct HabitListView: View {
                                     }
                                 }
                             }
-                           
+                            .listStyle(InsetGroupedListStyle())
+                            .onAppear(perform: notificationManager.reloadAuthorizationStatus)
+                            .onChange(of: notificationManager.authorizationStatus){ authorizationStatus in
+                                switch authorizationStatus {
+                                case .notDetermined:
+                                    notificationManager.requestAuthorization()
+                                    
+                                case .authorized:
+                                    
+                                    notificationManager.reloadLocalNotificaitons()
+                                    
+                                    break
+                                default:
+                                    break
+                                    
+                                    
+                                    
+                                }
+                                
+                            }
                             
                             
                         
@@ -129,6 +149,7 @@ struct HabitsTextView: View {
             Color (red: 244/256, green:221/256,blue: 220/256)
             HStack{
                 Text(String(habit.currentStreak))
+                    .fontWeight(.semibold)
                     .onAppear() {
                         habitList.streakCounter(habit: habit)
                         habitList.resetToggle(habit: habit)

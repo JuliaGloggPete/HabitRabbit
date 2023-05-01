@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B92ED97629FC35240001D9A4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92ED97529FC35240001D9A4 /* NotificationManager.swift */; };
 		B933ADC129EFE48E00486814 /* HabitDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B933ADC029EFE48E00486814 /* HabitDetailsView.swift */; };
 		B9E7292F29F108EF00A4448D /* HabitsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E7292E29F108EF00A4448D /* HabitsVM.swift */; };
 		B9E94BA329EE9A270090A51E /* HabitRabbitApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E94BA229EE9A270090A51E /* HabitRabbitApp.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B92ED97529FC35240001D9A4 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		B933ADC029EFE48E00486814 /* HabitDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailsView.swift; sourceTree = "<group>"; };
 		B9E7292E29F108EF00A4448D /* HabitsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsVM.swift; sourceTree = "<group>"; };
 		B9E94B9F29EE9A270090A51E /* HabitRabbit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitRabbit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +92,7 @@
 		B9E94B9629EE9A270090A51E = {
 			isa = PBXGroup;
 			children = (
+				B92ED97529FC35240001D9A4 /* NotificationManager.swift */,
 				B9E94BA129EE9A270090A51E /* HabitRabbit */,
 				B9E94BB229EE9A280090A51E /* HabitRabbitTests */,
 				B9E94BBC29EE9A280090A51E /* HabitRabbitUITests */,
@@ -287,6 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B92ED97629FC35240001D9A4 /* NotificationManager.swift in Sources */,
 				B9E94BCD29EE9BD80090A51E /* Habit.swift in Sources */,
 				B9E7292F29F108EF00A4448D /* HabitsVM.swift in Sources */,
 				B9E94BA529EE9A270090A51E /* ContentView.swift in Sources */,

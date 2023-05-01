@@ -12,6 +12,7 @@ import Firebase
 struct HabitDetailsView: View {
     let db = Firestore.firestore()
     var habit : Habit?
+  
     @EnvironmentObject var habitList : HabitsVM
     @State var content : String = ""
     @State var category : String = "Category"
