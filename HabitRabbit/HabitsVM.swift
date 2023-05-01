@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 
 
+
 class HabitsVM : ObservableObject {
     
     let db = Firestore.firestore()
@@ -28,21 +29,54 @@ class HabitsVM : ObservableObject {
             
         }}
     
-    func toggle(habit: Habit){
+    func deleteHabit(index: Int){
         
         guard let user = auth.currentUser else {return}
         let itemsRef = db.collection("users").document(user.uid).collection("habits")
-        let date = Date()
         
+        let habit = habits[index]
         if let id = habit.id{
+            itemsRef.document(id).delete()
             
-            itemsRef.document(id).updateData(["done" : !habit.done])
             
-            if habit.done ==  false {
+        }
+        
+    }
+    
+//    func toggle(habit: Habit){
+//        
+//        guard let user = auth.currentUser else {return}
+//        let itemsRef = db.collection("users").document(user.uid).collection("habits")
+//        let date = Date()
+//        
+//        if let id = habit.id{
+//            
+//            itemsRef.document(id).updateData(["done" : !habit.done])
+//            
+//            if habit.done ==  false {
+//                if !habit.dateTracker.contains(where: { Calendar.current.isDate($0, inSameDayAs: date) }) {
+//                    itemsRef.document(id).updateData(["dateTracker" : FieldValue.arrayUnion([date])])
+//                }}
+//            
+//        }
+//    
+//    }
+    
+    func toggle(habit: Habit) {
+        objectWillChange.send()
+
+        guard let user = auth.currentUser else { return }
+        let itemsRef = db.collection("users").document(user.uid).collection("habits")
+        let date = Date()
+
+        if let id = habit.id {
+            itemsRef.document(id).updateData(["done": !habit.done])
+
+            if habit.done == false {
                 if !habit.dateTracker.contains(where: { Calendar.current.isDate($0, inSameDayAs: date) }) {
-                    itemsRef.document(id).updateData(["dateTracker" : FieldValue.arrayUnion([date])])
-                }}
-            
+                    itemsRef.document(id).updateData(["dateTracker": FieldValue.arrayUnion([date])])
+                }
+            }
         }
     }
     

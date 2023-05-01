@@ -33,8 +33,10 @@ struct HabitRabbitApp: App {
         WindowGroup {
            // HabitListView().environmentObject(habitList)
             ContentView().environmentObject(habitList)
+            
             //SignInView().environmentObject(habitList)
             //HabitDetailsView().
         }
+      
     }
 }
