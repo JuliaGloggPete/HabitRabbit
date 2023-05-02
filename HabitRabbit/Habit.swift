@@ -20,6 +20,7 @@ struct Habit : Identifiable, Equatable, Codable {
     var dateTracker : [Date]
     var currentStreak: Int 
     var initialDate : Date
+   // var setReminder : Bool = false
     
     init(id: String? = nil, content: String, done: Bool, category: String, timesAWeek: Int, dateTracker: [Date], currentStreak: Int, initialDate: Date) {
         self.id = id
@@ -30,6 +31,7 @@ struct Habit : Identifiable, Equatable, Codable {
         self.dateTracker = dateTracker
         self.currentStreak = currentStreak
         self.initialDate = initialDate
+       // self.setReminder = setReminder
     }
     
     //den biten hör nog inte till här tror jag

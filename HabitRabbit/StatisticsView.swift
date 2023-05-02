@@ -8,8 +8,25 @@
 import SwiftUI
 
 struct StatisticsView: View {
+    
+    @EnvironmentObject var habitList : HabitsVM
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("En sammanställning av användarens utförda vanor för varje dag, vecka och månad.")
+      //choose a date
+        //datepicker
+        //show deeds done that date
+        
+        
+        Button(action: {}){
+        Text("Show Month")
+        }
+    
+        Button(action: {}){
+        Text("Show Week")
+        }
+        //https://www.youtube.com/watch?v=EnNAQ-b1yPU
     }
 }
 

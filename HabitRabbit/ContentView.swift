@@ -11,7 +11,7 @@ import Firebase
 struct ContentView : View {
     
     @State var signedIn = false
-    
+    @StateObject private var notificationManager = NotificationManager()
     
     var body: some View {
 //        ZStack{
@@ -21,7 +21,7 @@ struct ContentView : View {
                 SignInView(signedIn: $signedIn)
                 
             }else {
-                HabitListView()
+                HabitListView(notificationManager: notificationManager)
             }
             
         }
@@ -67,9 +67,11 @@ struct HabitListView: View {
     
     
     @EnvironmentObject var habitList : HabitsVM
-    @StateObject private var notificationManager = NotificationManager()
+    @ObservedObject var notificationManager: NotificationManager
     @State var showingHabitDetails = false
     @State var selectedHabit : Habit?
+    @State var showingStatistics = false
+    @State var showToggle = true
     
     var body: some View {
         
@@ -82,7 +84,7 @@ struct HabitListView: View {
                     List() {
                         
                         ForEach(habitList.habits) { habit in
-                            //                                NavigationLink(destination: HabitDetailsView(habit: habit)) {
+     
                             Section{
                                 
                                 HStack{
@@ -91,7 +93,7 @@ struct HabitListView: View {
                                     Spacer()
                                     HabitsToggleView(habit: habit)
                                         .onChange(of: habit.done) { _ in
-                                            habitList.toggle(habit: habit)
+                                           // habitList.toggle(habit: habit)
                                             habitList.streakCounter(habit: habit)
                                             habitList.listen2FS()
                                         }
@@ -99,7 +101,7 @@ struct HabitListView: View {
                                 }
                                 
                                 Button(action: {
-                                    // lägga till en bool som trigger Navigationlink
+                             
                                     selectedHabit = habit
                                     showingHabitDetails = true
                                     
@@ -123,16 +125,12 @@ struct HabitListView: View {
                         }
                         
                         .navigationTitle("Habits")
-                       .foregroundColor(Color(red: 244/256, green:221/256,blue: 220/256))
+                        .foregroundColor(Color(red: 244/256, green:221/256,blue: 220/256))
                         .cornerRadius(10)
                         .colorMultiply(Color(red: 244/256, green:221/256,blue: 220/256))
                         
                     }
-                    //                        .toolbar {
-                    //                            ToolbarItem(placement: .navigationBarTrailing) {
-                    //                                EditButton()
-                    //                            }
-                    //                        }
+       
                     .listStyle(InsetGroupedListStyle())
                     .onAppear(perform: notificationManager.reloadAuthorizationStatus)
                     .onChange(of: notificationManager.authorizationStatus){ authorizationStatus in
@@ -152,21 +150,38 @@ struct HabitListView: View {
                     }
                     
                 }
-                Image("Rabbit")
-                    .resizable()
-                    .frame(width: 200, height: 200)
+                VStack{
+                    Image("Rabbit")
+                        .resizable()
+                        .frame(width: 200, height: 200)
+                    Button(action: {showingStatistics = true
+                        
+                    })
+                    {
+                        Text("Statistics")
+                        
+                    }
+                }
+                
             }
             
-            
             .navigationTitle("Habit")
-            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView()){
+            .navigationBarItems(trailing: NavigationLink(destination: HabitDetailsView(   notificationManager: notificationManager)){
                 Image(systemName: "plus.circle")
             })
         }
         .sheet(isPresented: $showingHabitDetails) {
             NavigationView {
-                HabitDetailsView(habit: selectedHabit)
+                HabitDetailsView(habit: selectedHabit, notificationManager: notificationManager)
                     .navigationBarItems(trailing: Button("Done") {
+                        self.showingHabitDetails = false
+                    })
+            }
+        }
+        .sheet(isPresented: $showingStatistics) {
+            NavigationView {
+           StatisticsView()
+                    .navigationBarItems(trailing: Button("Back") {
                         self.showingHabitDetails = false
                     })
             }
@@ -182,11 +197,11 @@ struct HabitListView: View {
    
 
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HabitListView()
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        HabitListView(notificationManager: NotificationManager())
+    }
+}
 
 
 struct HabitsTextView: View {
@@ -195,6 +210,8 @@ struct HabitsTextView: View {
     
     var body: some View {
     
+        
+        // göra om till en button så jag kan ta bort Editknappen som inte funkar hundra
             HStack{
                 
                 Text(String(habit.currentStreak))
@@ -203,11 +220,9 @@ struct HabitsTextView: View {
                 
                 Text(habit.content)
                     .foregroundColor(.black)
-//                    .foregroundColor(habit.category == "Nutrition/Health" ? .blue : habit.category == "Nutrition/Health" ? .green : .black)
-//                    .listRowBackground(habit.category == "Sports/Health" ? Color.yellow : habit.category == "Sports/Health" ? Color.blue : Color.white)
-                    
-            }
-        }
+
+            }.onAppear{habitList.resetToggle(habit: habit)}
+    }
     }
 
 
@@ -215,15 +230,17 @@ struct HabitsToggleView: View {
     let habit: Habit
     
     @EnvironmentObject var habitList: HabitsVM
-    
+    //undo=?
     var body: some View {
         Button(action: {
             habitList.toggle(habit: habit)
         
             
         }) {
+            
+            //antingen göra nåt när man trycker på done igen så att den tas bort eller låsa den så man inte kan trycker igen när man har tryckt - om dagens datum är i done så är image osynlig och text fet t.ex eller en delete funktion
             Image(systemName: habit.done ? "checkmark.seal.fill" : "seal" )
-                .foregroundColor(.cyan)
+                .foregroundColor(Color(red: 192/256, green:128/256,blue: 102/256))
             
         }
         

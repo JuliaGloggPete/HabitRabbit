@@ -12,12 +12,14 @@ import Firebase
 struct HabitDetailsView: View {
     let db = Firestore.firestore()
     var habit : Habit?
-  
+    @ObservedObject var notificationManager: NotificationManager
     @EnvironmentObject var habitList : HabitsVM
     @State var content : String = ""
     @State var category : String = "Category"
     @State var done : Bool = false
     @State var timesAWeek : Int = 7
+    @State var setReminder : Bool = true
+    @State var today = Date()
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -90,8 +92,43 @@ struct HabitDetailsView: View {
                     )
                 }
                 
-                Spacer()
+                Section{
+                    
+                        VStack{
+                        
+                            DatePicker("Daily Reminder:", selection: $today, displayedComponents: [.hourAndMinute])
+                                .padding()
+                                .foregroundColor(Color(red: 192/256, green:128/256,blue: 102/256))
+                            
+                        //detta kan jag egentligen lägga till i save knappen och bara göra en toggle om man inte vill ha en reminder på just den - men då behöver jag en bool som avgör det
+                        Button{
+                            let dateComponent = Calendar.current.dateComponents([.hour, .minute], from: today)
+                            
+                            guard let hour = dateComponent.hour, let minute = dateComponent.minute else{ return}
+                            
+                            notificationManager.createLocalNotification(title: content, hour: hour, minute: minute){
+                                error in
+                                if error == nil {
+                                    DispatchQueue.main.async {
+                                       print("saved")
+                                    }
+                                }
+                            }
+                            
+                            
+                        } label:{
+                            Text("set Reminder")
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .backgroundStyle(.primary)
+                }
+                .frame(width: 240, height: 140)
+                .background(Color(red: 244/256, green:221/256,blue: 220/256))
+                .cornerRadius(15)
                 
+                    Spacer()
+                    //  En sammanställning av användarens utförda vanor för varje dag, vecka och månad.
                 
                 Menu{
                     Button(action: {content = "Go for a 30min walk"; category = "Sports/Health"; timesAWeek = 7
@@ -117,9 +154,12 @@ struct HabitDetailsView: View {
                           icon:{Image(systemName: "hare")}
                     )
                 }
+               
                 
         }
+            .accentColor(Color(red: 192/256, green:128/256,blue: 102/256))
         .onAppear(perform: setContent)
+        .onDisappear{notificationManager.reloadLocalNotificaitons()}
         .navigationBarTitle("Habit Detail", displayMode: .inline)
         .navigationBarItems(trailing: Button("Save"){
             if let habit = habit{

@@ -115,7 +115,17 @@ class HabitsVM : ObservableObject {
                 if let dateTracker = data?["dateTracker"] as? [Timestamp] {
                     let today = Date()
                     let calendar = Calendar.current
+                    
+                    // värdet av streaknu
+                    //if yesterday inte finns new streak = 0
+                    // streaknu = streak och updateData
+                    //else if today finns = 1
+                    // streaknu = 1 streaknu = 1
+                    // else if yesterday finns - streak +1
+                    // streak +1 = newstreak, newstreak = streak
+                    
                     var currentStreak = 0
+                    
                     if dateTracker.contains(where: { calendar.isDate($0.dateValue(), inSameDayAs: today) }){
                         currentStreak += 1}
                     
@@ -179,6 +189,65 @@ class HabitsVM : ObservableObject {
         }
     }
     
+    func fetchDateTrackerWeek(habit: Habit, forWeekContaining date: Date, completion: @escaping (Int) -> Void) {
+        guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
+
+        // Determine the start and end dates of the week containing the specified date
+        let calendar = Calendar.current
+        var startOfWeek = Date()
+        var interval = TimeInterval()
+        calendar.dateInterval(of: .weekOfYear, start: &startOfWeek, interval: &interval, for: date)
+        let endOfWeek = startOfWeek.addingTimeInterval(interval - 1)
+
+        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
+        habitRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                if let dateTracker = data?["dateTracker"] as? [Timestamp] {
+                    // Count the number of times the habit was done during the specified week
+                    var count = 0
+                    for timestamp in dateTracker {
+                        let date = timestamp.dateValue()
+                        if date >= startOfWeek && date <= endOfWeek {
+                            count += 1
+                        }
+                    }
+                    completion(count)
+                }
+            } else {
+                print("Habit document does not exist")
+            }
+        }
+    }
+
+    func monthFetchDateTracker(habit: Habit, date: Date) {
+        guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
+        
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: date)
+        let month = calendar.component(.month, from: date)
+        let startComponents = DateComponents(year: year, month: month, day: 1)
+        let startDate = calendar.date(from: startComponents)!
+        let endComponents = DateComponents(year: year, month: month, day: calendar.range(of: .day, in: .month, for: startDate)!.count)
+        let endDate = calendar.date(from: endComponents)!
+        
+        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
+        habitRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                if let dateTracker = data?["dateTracker"] as? [Timestamp] {
+                    let filteredDates = dateTracker.filter { timestamp in
+                        let date = timestamp.dateValue()
+                        return date >= startDate && date <= endDate
+                    }
+                    let count = filteredDates.count
+                    print("\(habit.content): \(count)")
+                }
+            } else {
+                print("Habit document does not exist")
+            }
+        }
+    }
 
     
     func listen2FS (){
