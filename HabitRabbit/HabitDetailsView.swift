@@ -99,6 +99,16 @@ struct HabitDetailsView: View {
                         Text("Go for a 30min walk")
                         
                     })
+                    Button(action: {content = "Eat fruit/vegetables"; category = "Nutrition/Health"; timesAWeek = 7
+                    }, label: {
+                        Text("Eat fruit/vegetables")
+                        
+                    })
+                    Button(action: {content = "Learn a new word"; category = "Knowlege"; timesAWeek = 7
+                    }, label: {
+                        Text("Learn a new word")
+                        
+                    })
                     
                     
                 }label: {
