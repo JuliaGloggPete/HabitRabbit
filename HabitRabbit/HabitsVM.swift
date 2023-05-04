@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 
-
+//BUG streak reset - kolla med reset toggle 
 
 class HabitsVM : ObservableObject {
     
@@ -18,6 +18,7 @@ class HabitsVM : ObservableObject {
     @Published var habits = [Habit]()
 
     @Published var dates: [String] = []
+  //  @Published var donePerMonth: Int = 0
 
     func update(habit: Habit, with content: String, with category: String, with timesAWeek: Int){
         
@@ -43,24 +44,8 @@ class HabitsVM : ObservableObject {
         
     }
     
-//    func toggle(habit: Habit){
-//        
-//        guard let user = auth.currentUser else {return}
-//        let itemsRef = db.collection("users").document(user.uid).collection("habits")
-//        let date = Date()
-//        
-//        if let id = habit.id{
-//            
-//            itemsRef.document(id).updateData(["done" : !habit.done])
-//            
-//            if habit.done ==  false {
-//                if !habit.dateTracker.contains(where: { Calendar.current.isDate($0, inSameDayAs: date) }) {
-//                    itemsRef.document(id).updateData(["dateTracker" : FieldValue.arrayUnion([date])])
-//                }}
-//            
-//        }
-//    
-//    }
+
+    
     
     func toggle(habit: Habit) {
         objectWillChange.send()
@@ -109,7 +94,7 @@ class HabitsVM : ObservableObject {
     func streakCounter(habit: Habit) {
         guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
         
-        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
+        let habitRef = db.collection("users").document(user.uid).collection("habits").document(habitId)
         habitRef.getDocument { (document, error) in
             if let document = document, document.exists {
                 let data = document.data()
@@ -132,6 +117,7 @@ class HabitsVM : ObservableObject {
                         // Continue checking back one day at a time
                         //OBS måste nog sortera listan från firebase först om jag lägga till en funktioon där man kan lägga till ifall man har glömt bocka i dagen innan - för det funkar inte im det är på fel plats på datedrackern
                         var currentDay = yesterday
+                        
                         while let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDay),
                               dateTracker.contains(where: { calendar.isDate($0.dateValue(), inSameDayAs: previousDay) }) {
                             currentStreak += 1
@@ -150,7 +136,7 @@ class HabitsVM : ObservableObject {
     func resetToggle(habit: Habit) {
         guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
         
-        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
+        let habitRef = db.collection("users").document(user.uid).collection("habits").document(habitId)
         habitRef.getDocument { (document, error) in
             if let document = document, document.exists {
                 let data = document.data()
@@ -164,6 +150,7 @@ class HabitsVM : ObservableObject {
             }
             
         }
+    
     
     func fetchDateTracker(habit: Habit) {
         guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
@@ -184,65 +171,114 @@ class HabitsVM : ObservableObject {
         }
     }
     
-    func fetchDateTrackerWeek(habit: Habit, forWeekContaining date: Date, completion: @escaping (Int) -> Void) {
-        guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
 
-        // Determine the start and end dates of the week containing the specified date
+    
+    func filterByMonth(habit: Habit, choosenMonth: Date) -> [String] {
+        var doneInMonth: [String] = []
         let calendar = Calendar.current
-        var startOfWeek = Date()
-        var interval = TimeInterval()
-        calendar.dateInterval(of: .weekOfYear, start: &startOfWeek, interval: &interval, for: date)
-        let endOfWeek = startOfWeek.addingTimeInterval(interval - 1)
+        let month = calendar.component(.month, from: choosenMonth)
+        let year = calendar.component(.year, from: choosenMonth)
+        
+        
+        let filteredDates = habit.dateTracker.filter { date in
+            let monthNumber = Calendar.current.component(.month, from: date)
+            return monthNumber == month
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        for date in filteredDates {
+            doneInMonth.append(formatter.string(from: date))
+       
+        }
+        print(habit.content, doneInMonth)
+        return doneInMonth
+    }
+    
 
-        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
-        habitRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                let data = document.data()
-                if let dateTracker = data?["dateTracker"] as? [Timestamp] {
-                    // Count the number of times the habit was done during the specified week
-                    var count = 0
-                    for timestamp in dateTracker {
-                        let date = timestamp.dateValue()
-                        if date >= startOfWeek && date <= endOfWeek {
-                            count += 1
-                        }
-                    }
-                    completion(count)
+    
+    
+    func filterByWeek(habit: Habit, choosenWeek: Date) -> [String] {
+            
+        var doneInWeek: [String] = []
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.weekOfYear, .year], from: choosenWeek)
+        let week = dateComponents.weekOfYear
+        let year = dateComponents.year
+//        let week = calendar.component(.weekOfYear, from: choosenWeek)
+//        let year = calendar.component(.year, from: choosenWeek)
+        var weekdays: [Date] = []
+      
+        // Get the start and end dates of the chosen week
+        guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: choosenWeek) else {
+            return []
+        }
+        
+        let startDate = weekInterval.start
+        let endDate = weekInterval.end
+        
+        // Create an array of dates for each day in the week
+        var currentDate = startDate
+        while currentDate <= endDate {
+            weekdays.append(currentDate)
+            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+        }
+        
+        // Iterate over each date in the weekdays array
+        for date in weekdays {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let dateString = formatter.string(from: date)
+            
+            // Iterate over each timestamp in the habit.dateTracker array
+            for timestamp in habit.dateTracker {
+                let timestampDate = timestamp
+                let timestampDateString = formatter.string(from: timestampDate)
+                
+                // If the date strings match, append the date string to the doneInWeek array
+                if dateString == timestampDateString {
+                    doneInWeek.append(dateString)
                 }
-            } else {
-                print("Habit document does not exist")
             }
         }
+        print(habit.content, doneInWeek,"lala")
+        return doneInWeek
     }
 
-    func monthFetchDateTracker(habit: Habit, date: Date) {
-        guard let user = Auth.auth().currentUser, let habitId = habit.id else { return }
+
+
+
+
+    func getDailyStatistic(choosenDay: Date, habit: Habit) -> Bool {
+        
+        var doneThatDay = false
         
         let calendar = Calendar.current
-        let year = calendar.component(.year, from: date)
-        let month = calendar.component(.month, from: date)
-        let startComponents = DateComponents(year: year, month: month, day: 1)
-        let startDate = calendar.date(from: startComponents)!
-        let endComponents = DateComponents(year: year, month: month, day: calendar.range(of: .day, in: .month, for: startDate)!.count)
-        let endDate = calendar.date(from: endComponents)!
+      
+        let day = choosenDay
+    print(day)
         
-        let habitRef = Firestore.firestore().collection("users").document(user.uid).collection("habits").document(habitId)
-        habitRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                let data = document.data()
-                if let dateTracker = data?["dateTracker"] as? [Timestamp] {
-                    let filteredDates = dateTracker.filter { timestamp in
-                        let date = timestamp.dateValue()
-                        return date >= startDate && date <= endDate
-                    }
-                    let count = filteredDates.count
-                    print("\(habit.content): \(count)")
-                }
-            } else {
-                print("Habit document does not exist")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateString = formatter.string(from: day)
+        
+        
+        print (dateString)
+        
+        for timestamp in habit.dateTracker {
+            let timestampDate = timestamp
+            let timestampDateString = formatter.string(from: timestampDate)
+            if dateString == timestampDateString {
+                doneThatDay = true
             }
+          
         }
+        print (habit.content, doneThatDay)
+        return doneThatDay
     }
+    
+
+
 
     
     func listen2FS (){

@@ -38,11 +38,7 @@ struct HabitDetailsView: View {
                             }
                         }}
                 Spacer()
-                
-               
-                
-                
-                
+          
                 Menu{
                     ForEach(1..<8) { number in
                         Button(action: {timesAWeek = number}, label: {

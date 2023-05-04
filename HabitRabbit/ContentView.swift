@@ -196,12 +196,13 @@ struct HabitListView: View {
 }
    
 
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        HabitListView(notificationManager: NotificationManager())
-    }
-}
+//
+//struct ContentView_Previews: PreviewProvider {
+//    @EnvironmentObject var habitList: HabitsVM
+//    static var previews: some View {
+//        HabitListView(notificationManager: NotificationManager())
+//    }
+//}
 
 
 struct HabitsTextView: View {
@@ -221,7 +222,7 @@ struct HabitsTextView: View {
                 Text(habit.content)
                     .foregroundColor(.black)
 
-            }.onAppear{habitList.resetToggle(habit: habit)}
+            }.onAppear{habitList.resetToggle(habit: habit); habitList.streakCounter(habit: habit)}
     }
     }
 
