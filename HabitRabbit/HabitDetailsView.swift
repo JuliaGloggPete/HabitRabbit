@@ -20,6 +20,7 @@ struct HabitDetailsView: View {
     @State var timesAWeek : Int = 7
     @State var setReminder : Bool = true
     @State var today = Date()
+
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -100,26 +101,11 @@ struct HabitDetailsView: View {
                                 .padding()
                                 .foregroundColor(Color(red: 192/256, green:128/256,blue: 102/256))
                             
-                        //detta kan jag egentligen lägga till i save knappen och bara göra en toggle om man inte vill ha en reminder på just den - men då behöver jag en bool som avgör det
-                        Button{
-                            let dateComponent = Calendar.current.dateComponents([.hour, .minute], from: today)
                             
-                            guard let hour = dateComponent.hour, let minute = dateComponent.minute else{ return}
-                            
-                            notificationManager.createLocalNotification(title: content, hour: hour, minute: minute){
-                                error in
-                                if error == nil {
-                                    DispatchQueue.main.async {
-                                       print("saved")
-                                    }
-                                }
-                            }
-                            
-                            
-                        } label:{
-                            Text("set Reminder")
-                                .fontWeight(.bold)
-                        }
+                            Toggle("Set reminder", isOn: $setReminder)
+                                .padding()
+                                .foregroundColor(Color(red: 192/256, green:128/256,blue: 102/256))
+       
                     }
                     .backgroundStyle(.primary)
                 }
@@ -170,8 +156,23 @@ struct HabitDetailsView: View {
                 let date = Date()
                 let newHabit = Habit(content: content, done: false, category: category, timesAWeek: timesAWeek, dateTracker: [],currentStreak: 0,initialDate: date)
                 habitList.saveHabit(habit: newHabit)
-
                 
+                if setReminder{
+                    
+                    let dateComponent = Calendar.current.dateComponents([.hour, .minute], from: today)
+                    
+                    guard let hour = dateComponent.hour, let minute = dateComponent.minute else{ return}
+                    
+                    notificationManager.createLocalNotification(title: content, hour: hour, minute: minute){
+                        error in
+                        if error == nil {
+                            DispatchQueue.main.async {
+                                print("saved")
+                            }
+                        }
+                    }
+                    
+                }
             }
             presentationMode.wrappedValue.dismiss()
             

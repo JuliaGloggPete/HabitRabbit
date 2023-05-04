@@ -70,9 +70,10 @@ class HabitsVM : ObservableObject {
         let date = Date()
 
         if let id = habit.id {
-            itemsRef.document(id).updateData(["done": !habit.done])
+           
 
             if habit.done == false {
+                itemsRef.document(id).updateData(["done": !habit.done])
                 if !habit.dateTracker.contains(where: { Calendar.current.isDate($0, inSameDayAs: date) }) {
                     itemsRef.document(id).updateData(["dateTracker": FieldValue.arrayUnion([date])])
                 }
@@ -116,14 +117,7 @@ class HabitsVM : ObservableObject {
                     let today = Date()
                     let calendar = Calendar.current
                     
-                    // värdet av streaknu
-                    //if yesterday inte finns new streak = 0
-                    // streaknu = streak och updateData
-                    //else if today finns = 1
-                    // streaknu = 1 streaknu = 1
-                    // else if yesterday finns - streak +1
-                    // streak +1 = newstreak, newstreak = streak
-                    
+
                     var currentStreak = 0
                     
                     if dateTracker.contains(where: { calendar.isDate($0.dateValue(), inSameDayAs: today) }){
@@ -136,6 +130,7 @@ class HabitsVM : ObservableObject {
                         currentStreak += 1
                         
                         // Continue checking back one day at a time
+                        //OBS måste nog sortera listan från firebase först om jag lägga till en funktioon där man kan lägga till ifall man har glömt bocka i dagen innan - för det funkar inte im det är på fel plats på datedrackern
                         var currentDay = yesterday
                         while let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDay),
                               dateTracker.contains(where: { calendar.isDate($0.dateValue(), inSameDayAs: previousDay) }) {

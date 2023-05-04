@@ -239,6 +239,8 @@ struct HabitsToggleView: View {
         }) {
             
             //antingen göra nåt när man trycker på done igen så att den tas bort eller låsa den så man inte kan trycker igen när man har tryckt - om dagens datum är i done så är image osynlig och text fet t.ex eller en delete funktion
+ 
+            
             Image(systemName: habit.done ? "checkmark.seal.fill" : "seal" )
                 .foregroundColor(Color(red: 192/256, green:128/256,blue: 102/256))
             
