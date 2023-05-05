@@ -23,6 +23,8 @@ struct HabitDetailsView: View {
 
     @Environment(\.presentationMode) var presentationMode
     
+
+    
     var body: some View {
 
             VStack{

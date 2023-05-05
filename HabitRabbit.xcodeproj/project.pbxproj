@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B90454A02A042458006D6EC4 /* InfoOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B904549F2A042458006D6EC4 /* InfoOverlayView.swift */; };
 		B92ED97629FC35240001D9A4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92ED97529FC35240001D9A4 /* NotificationManager.swift */; };
 		B93049DD2A0043ED00A8C0F1 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93049DC2A0043ED00A8C0F1 /* StatisticsView.swift */; };
 		B933ADC129EFE48E00486814 /* HabitDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B933ADC029EFE48E00486814 /* HabitDetailsView.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B904549F2A042458006D6EC4 /* InfoOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoOverlayView.swift; sourceTree = "<group>"; };
 		B92ED97529FC35240001D9A4 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		B93049DC2A0043ED00A8C0F1 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		B933ADC029EFE48E00486814 /* HabitDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailsView.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				B933ADC029EFE48E00486814 /* HabitDetailsView.swift */,
 				B9E7292E29F108EF00A4448D /* HabitsVM.swift */,
 				B93049DC2A0043ED00A8C0F1 /* StatisticsView.swift */,
+				B904549F2A042458006D6EC4 /* InfoOverlayView.swift */,
 			);
 			path = HabitRabbit;
 			sourceTree = "<group>";
@@ -294,6 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B92ED97629FC35240001D9A4 /* NotificationManager.swift in Sources */,
+				B90454A02A042458006D6EC4 /* InfoOverlayView.swift in Sources */,
 				B9E94BCD29EE9BD80090A51E /* Habit.swift in Sources */,
 				B9E7292F29F108EF00A4448D /* HabitsVM.swift in Sources */,
 				B93049DD2A0043ED00A8C0F1 /* StatisticsView.swift in Sources */,

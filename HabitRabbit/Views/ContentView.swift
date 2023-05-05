@@ -65,9 +65,36 @@ struct SignInView : View {
 
 struct HabitListView: View {
     
+    @ObservedObject var notificationManager: NotificationManager
+    
+    @ViewBuilder
+    var infoOverlayView: some View{
+        switch notificationManager.authorizationStatus{
+            
+                
+            case .denied:
+            
+                InfoOverlayView(
+                    infoMessage: "PleaseEnable Notifiacation Permission in Settings",
+                    buttonTitle: "Settings",
+                    systemImageName: "gear",
+                    action: {
+                        if let url = URL(string: UIApplication.openSettingsURLString),
+                           UIApplication.shared.canOpenURL(url){
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            
+                            
+                        }
+                    }
+                )
+            default:
+                EmptyView()
+            }
+        }
+    
     
     @EnvironmentObject var habitList : HabitsVM
-    @ObservedObject var notificationManager: NotificationManager
+    
     @State var showingHabitDetails = false
     @State var selectedHabit : Habit?
     @State var showingStatistics = false
@@ -132,6 +159,7 @@ struct HabitListView: View {
                     }
        
                     .listStyle(InsetGroupedListStyle())
+                    .overlay(infoOverlayView)
                     .onAppear(perform: notificationManager.reloadAuthorizationStatus)
                     .onChange(of: notificationManager.authorizationStatus){ authorizationStatus in
                         switch authorizationStatus {
@@ -148,6 +176,12 @@ struct HabitListView: View {
                         }
                         
                     }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)){ _ in
+                        notificationManager.reloadAuthorizationStatus()
+                    }
+//                    .onChange(of: showToggle) { newValue in
+//                        NavigationLink(destination: HabitDetailsView(habit: habit))
+//                    }
                     
                 }
                 VStack{
@@ -221,6 +255,14 @@ struct HabitsTextView: View {
                 
                 Text(habit.content)
                     .foregroundColor(.black)
+                if habit.currentStreak >= 5 {
+                    let carrots = (habit.currentStreak / 5)
+                    ForEach(1...carrots, id: \.self) { _ in
+                        Image(systemName: "carrot.fill")
+                            .foregroundColor(.orange)
+                    }
+                }
+
 
             }.onAppear{habitList.resetToggle(habit: habit); habitList.streakCounter(habit: habit)}
     }
