@@ -74,8 +74,13 @@ class HabitsVM : ObservableObject {
         
         
         if let id = habit.id{
-            itemsRef.document(id).updateData(["content": habit.content, "category": habit.category, "timesAWeek": habit.timesAWeek])
-            
+            do {
+                
+                try itemsRef.document(id).updateData(["content": habit.content, "category": habit.category, "timesAWeek": habit.timesAWeek])
+            }
+            catch{
+                print(error)
+            }
             
             
         } else{

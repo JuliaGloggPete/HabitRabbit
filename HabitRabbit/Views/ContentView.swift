@@ -115,7 +115,7 @@ struct HabitListView: View {
                             Section{
                                 
                                 HStack{
-                                    HabitsTextView(habit: habit)
+                                    HabitsTextView(habit: habit,notificationManager: notificationManager)
                                     
                                     Spacer()
                                     HabitsToggleView(habit: habit)
@@ -126,17 +126,8 @@ struct HabitListView: View {
                                         }
                                     
                                 }
-                                
-                                Button(action: {
-                             
-                                    selectedHabit = habit
-                                    showingHabitDetails = true
-                                    
-                                    //NavigationLink(destination: HabitDetailsView(habit: habit))
-                                    
-                                }){
-                                    Label("Edit", systemImage: "pencil")
-                                }
+                                HabitsEditButtonView(habit:habit, notificationManager:notificationManager)
+                        
                                 
                             }
                         }
@@ -204,14 +195,6 @@ struct HabitListView: View {
                 Image(systemName: "plus.circle")
             })
         }
-        .sheet(isPresented: $showingHabitDetails) {
-            NavigationView {
-                HabitDetailsView(habit: selectedHabit, notificationManager: notificationManager)
-                    .navigationBarItems(trailing: Button("Done") {
-                        self.showingHabitDetails = false
-                    })
-            }
-        }
         .sheet(isPresented: $showingStatistics) {
             NavigationView {
            StatisticsView()
@@ -242,33 +225,46 @@ struct HabitListView: View {
 struct HabitsTextView: View {
     let habit: Habit
     @EnvironmentObject var habitList: HabitsVM
-    
+    @ObservedObject var notificationManager: NotificationManager
     var body: some View {
-    
+        
         
         // göra om till en button så jag kan ta bort Editknappen som inte funkar hundra
-            HStack{
-                
-                Text(String(habit.currentStreak))
-                    .fontWeight(.semibold)
-
-                
-                Text(habit.content)
-                    .foregroundColor(.black)
-                if habit.currentStreak >= 5 {
-                    let carrots = (habit.currentStreak / 5)
-                    ForEach(1...carrots, id: \.self) { _ in
-                        Image(systemName: "carrot.fill")
-                            .foregroundColor(.orange)
-                    }
+        HStack{
+            
+            Text(String(habit.currentStreak))
+                .fontWeight(.semibold)
+            
+            
+            Text(habit.content)
+                .foregroundColor(.black)
+            if habit.currentStreak >= 5 {
+                let carrots = (habit.currentStreak / 5)
+                ForEach(1...carrots, id: \.self) { _ in
+                    Image(systemName: "carrot.fill")
+                        .foregroundColor(.orange)
                 }
-
-
-            }.onAppear{habitList.resetToggle(habit: habit); habitList.streakCounter(habit: habit)}
+            }
+        }.onAppear{habitList.resetToggle(habit: habit); habitList.streakCounter(habit: habit)}
+ 
     }
     }
+    
 
+struct HabitsEditButtonView: View {
+    let habit: Habit
+    @EnvironmentObject var habitList: HabitsVM
+    @ObservedObject var notificationManager: NotificationManager
+    
+    var body: some View {
+        NavigationLink(destination: HabitDetailsView(habit: habit, notificationManager: notificationManager)) {
+            Label("Edit", systemImage: "pencil")
+        }
+        .buttonStyle(.borderless)
+    }
+}
 
+    
 struct HabitsToggleView: View {
     let habit: Habit
     

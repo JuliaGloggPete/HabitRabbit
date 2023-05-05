@@ -93,10 +93,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B936B7A32A04CD9C005D62A7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B93049DC2A0043ED00A8C0F1 /* StatisticsView.swift */,
+				B904549F2A042458006D6EC4 /* InfoOverlayView.swift */,
+				B933ADC029EFE48E00486814 /* HabitDetailsView.swift */,
+				B9E94BA429EE9A270090A51E /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		B9E94B9629EE9A270090A51E = {
 			isa = PBXGroup;
 			children = (
-				B92ED97529FC35240001D9A4 /* NotificationManager.swift */,
 				B9E94BA129EE9A270090A51E /* HabitRabbit */,
 				B9E94BB229EE9A280090A51E /* HabitRabbitTests */,
 				B9E94BBC29EE9A280090A51E /* HabitRabbitUITests */,
@@ -117,16 +127,14 @@
 		B9E94BA129EE9A270090A51E /* HabitRabbit */ = {
 			isa = PBXGroup;
 			children = (
+				B936B7A32A04CD9C005D62A7 /* Views */,
 				B9E94BD929EEAA900090A51E /* GoogleService-Info.plist */,
 				B9E94BA229EE9A270090A51E /* HabitRabbitApp.swift */,
-				B9E94BA429EE9A270090A51E /* ContentView.swift */,
+				B9E7292E29F108EF00A4448D /* HabitsVM.swift */,
+				B92ED97529FC35240001D9A4 /* NotificationManager.swift */,
+				B9E94BCC29EE9BD80090A51E /* Habit.swift */,
 				B9E94BA629EE9A270090A51E /* Assets.xcassets */,
 				B9E94BA829EE9A270090A51E /* Preview Content */,
-				B9E94BCC29EE9BD80090A51E /* Habit.swift */,
-				B933ADC029EFE48E00486814 /* HabitDetailsView.swift */,
-				B9E7292E29F108EF00A4448D /* HabitsVM.swift */,
-				B93049DC2A0043ED00A8C0F1 /* StatisticsView.swift */,
-				B904549F2A042458006D6EC4 /* InfoOverlayView.swift */,
 			);
 			path = HabitRabbit;
 			sourceTree = "<group>";

@@ -147,7 +147,24 @@ struct HabitDetailsView: View {
         .navigationBarTitle("Habit Detail", displayMode: .inline)
         .navigationBarItems(trailing: Button("Save"){
             if let habit = habit{
-                habitList.saveHabit(habit:habit)}
+                habitList.saveHabit(habit:habit)
+                if setReminder{
+                    
+                    let dateComponent = Calendar.current.dateComponents([.hour, .minute], from: today)
+                    
+                    guard let hour = dateComponent.hour, let minute = dateComponent.minute else{ return}
+                    
+                    notificationManager.createLocalNotification(title: content, hour: hour, minute: minute){
+                        error in
+                        if error == nil {
+                            DispatchQueue.main.async {
+                                print("saved")
+                            }
+                        }
+                    }
+                    
+                }
+            }
             else
             {
                 

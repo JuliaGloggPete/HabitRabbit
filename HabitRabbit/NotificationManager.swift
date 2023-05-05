@@ -18,7 +18,7 @@ final class NotificationManager: ObservableObject {
             DispatchQueue.main.async {
                 self.authorizationStatus = settings.authorizationStatus
             }
-           //wt
+           
             
             
         }
@@ -34,6 +34,8 @@ final class NotificationManager: ObservableObject {
         
         
     }
+    
+    //func deleteLocalNotification
     
     func reloadLocalNotificaitons(){
         
